@@ -6,9 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
-        companion object {
+    companion object {
         private const val DATABASE_NAME = "school.db"
-        private const val DATABASE_VERSION = 21
+        private const val DATABASE_VERSION = 1
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -25,7 +25,7 @@ class DatabaseHelper(context: Context) :
         """
         db.execSQL(createStudentTable)
 
-        // Tạo bảng subjects
+        // Tạo bảng subjects (cập nhật với subjectID)
         val createSubjectsTable = """
             CREATE TABLE subjects (
                 subjectID INTEGER PRIMARY KEY AUTOINCREMENT,
