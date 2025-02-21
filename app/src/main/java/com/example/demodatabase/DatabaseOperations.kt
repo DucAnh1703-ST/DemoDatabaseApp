@@ -9,7 +9,7 @@ import android.util.Log
 class DatabaseOperations {
     @SuppressLint("Range")
     fun saveStudentToDatabase(students: List<Student>, context: Context) {
-        val dbHelper = DatabaseHelper(context.applicationContext)
+        val dbHelper = DatabaseHelper(context)
         val db = dbHelper.writableDatabase
 
         // Bắt đầu giao dịch để cải thiện hiệu suất
@@ -113,7 +113,7 @@ class DatabaseOperations {
 
     @SuppressLint("Range")
     fun getFirst100Students(context: Context): List<Student> {
-        val dbHelper = DatabaseHelper(context.applicationContext)
+        val dbHelper = DatabaseHelper(context)
         val db = dbHelper.readableDatabase
 
         val studentList = mutableListOf<Student>()

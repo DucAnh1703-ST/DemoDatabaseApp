@@ -18,7 +18,7 @@ class MyApplication : Application() {
             databaseService = IMyMySchoolInterface.Stub.asInterface(binder)
             isBound = true
             Log.d("MyApplication", "Service connected")
-            Log.d("MyApplication", "Service connected (1) ${databaseService?.first100Students?.firstOrNull()}")
+            Log.d("MyApplication", "Service connected (1) ${databaseService?.first100Students?.lastOrNull()}")
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
