@@ -2,7 +2,6 @@ package com.example.demodatabase
 
 import android.content.Context
 import android.util.Log
-import com.example.demodatabase.model.Student
 import com.google.gson.Gson
 import java.io.InputStreamReader
 

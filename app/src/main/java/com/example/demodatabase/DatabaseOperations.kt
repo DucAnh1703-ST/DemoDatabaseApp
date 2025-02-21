@@ -5,9 +5,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import com.example.demodatabase.model.Student
-import com.example.demodatabase.model.Subjects
-import javax.security.auth.Subject
 
 class DatabaseOperations {
     @SuppressLint("Range")
@@ -114,8 +111,6 @@ class DatabaseOperations {
         }
     }
 
-
-
     @SuppressLint("Range")
     fun getFirst100Students(context: Context): List<Student> {
         val dbHelper = DatabaseHelper(context.applicationContext)
@@ -160,17 +155,6 @@ class DatabaseOperations {
 
         return studentList
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }
 
