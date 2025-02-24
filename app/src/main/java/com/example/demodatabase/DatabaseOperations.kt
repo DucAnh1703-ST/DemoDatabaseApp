@@ -156,6 +156,60 @@ class DatabaseOperations {
         return studentList
     }
 
+
+    @SuppressLint("Range")
+    fun getTop10StudentsBySubject(subjectName: String, context: Context): List<Student> {
+        val dbHelper = DatabaseHelper(context)
+        val db = dbHelper.readableDatabase
+
+        val studentList = mutableListOf<Student>()
+
+        // Truy vấn lấy 10 học sinh có điểm cao nhất trong môn học đã cho, sắp xếp theo firstName
+        val query = """
+        SELECT students.studentID, students.firstName, students.lastName, students.dateOfBirth, students.city, students.phone,
+               subjects.subjectID, subjects.name, subjects.score
+        FROM students
+        JOIN subjects ON students.studentID = subjects.studentID
+        WHERE subjects.name = ?
+        ORDER BY subjects.score DESC, students.firstName ASC
+        LIMIT 10
+    """
+
+        val cursor = db.rawQuery(query, arrayOf(subjectName))
+
+        // Lặp qua kết quả trả về
+        while (cursor.moveToNext()) {
+            val studentID = cursor.getInt(cursor.getColumnIndex("studentID"))
+            val firstName = cursor.getString(cursor.getColumnIndex("firstName"))
+            val lastName = cursor.getString(cursor.getColumnIndex("lastName"))
+            val dateOfBirth = cursor.getString(cursor.getColumnIndex("dateOfBirth"))
+            val city = cursor.getString(cursor.getColumnIndex("city"))
+            val phone = cursor.getString(cursor.getColumnIndex("phone"))
+
+            // Lấy môn học và điểm
+            val subjects = mutableListOf<Subjects>()
+            subjects.add(
+                Subjects(
+                    subjectID = cursor.getInt(cursor.getColumnIndex("subjectID")),  // Lấy subjectID từ câu truy vấn
+                    studentID = studentID,
+                    name = cursor.getString(cursor.getColumnIndex("name")),
+                    score = cursor.getInt(cursor.getColumnIndex("score"))
+                )
+            )
+
+            // Thêm sinh viên vào danh sách
+            studentList.add(Student(studentID, firstName, lastName, dateOfBirth, city, phone, subjects))
+        }
+
+        cursor.close()
+
+        return studentList
+    }
+
+
+
+
+
 }
 
 

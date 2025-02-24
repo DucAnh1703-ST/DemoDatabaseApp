@@ -34,10 +34,10 @@ class MySchoolService : Service() {
 //            return databaseHelper.getTop10SumAByCity(nameCity!!)
 //        }
 //
-//        override fun getTop10StudentSumBByCity(nameCity: String?): List<Student> {
-//            return databaseHelper.getTop10SumBByCity(nameCity!!)
-//        }
-//
+        override fun getTop10StudentsBySubject(nameSubject: String?): List<Student> {
+            return dataBaseOptionDemo.getTop10StudentsBySubject(nameSubject!!,this@MySchoolService)
+        }
+
         override fun getFirst100Students(): List<Student> {
             return dataBaseOptionDemo.getFirst100Students(this@MySchoolService)
         }

@@ -18,7 +18,17 @@ class MyApplication : Application() {
             databaseService = IMyMySchoolInterface.Stub.asInterface(binder)
             isBound = true
             Log.d("MyApplication", "Service connected")
-            Log.d("MyApplication", "Service connected (1) ${databaseService?.first100Students?.lastOrNull()}")
+//            Log.d("MyApplication", "Service connected (1) ${databaseService?.first100Students?.lastOrNull()}")
+
+            // Gọi hàm để lấy 10 học sinh có điểm cao nhất trong môn học cụ thể
+//            val subjectName = "Physics"  // Thay đổi môn học theo yêu cầu của bạn
+//            val top10Students = databaseService?.getTop10StudentsBySubject(subjectName)
+//
+//            // Log danh sách 10 sinh viên và môn học của họ
+//            top10Students?.forEach { student ->
+//                val subjectsInfo = student.subjects.joinToString(", ") { "${it.name}: ${it.score}" }
+//                Log.d("MyApplication", "Student: ${student.firstName} ${student.lastName}, Subjects: $subjectsInfo")
+//            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {

@@ -12,4 +12,5 @@ parcelable Subject;
 
 interface IMyMySchoolInterface {
     List<Student> getFirst100Students();
+    List<Student> getTop10StudentsBySubject(String nameSubject);
 }
