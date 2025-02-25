@@ -200,13 +200,177 @@ class DatabaseOperations {
             // Thêm sinh viên vào danh sách
             studentList.add(Student(studentID, firstName, lastName, dateOfBirth, city, phone, subjects))
         }
+        cursor.close()
+        return studentList
+    }
 
+    @SuppressLint("Range")
+    fun getTop10StudentsBySumA(city: String, context: Context): List<Student> {
+        val dbHelper = DatabaseHelper(context)
+        val db = dbHelper.readableDatabase
+
+        val studentList = mutableListOf<Student>()
+
+        // Truy vấn tính tổng điểm của 3 môn: Math, Physics, Chemistry, lọc theo thành phố
+        val query = """
+        SELECT s.studentID, s.firstName, s.lastName, s.dateOfBirth, s.city, s.phone,
+            (SUM(CASE WHEN sub.name = 'Math' THEN sub.score ELSE 0 END) +
+             SUM(CASE WHEN sub.name = 'Physics' THEN sub.score ELSE 0 END) +
+             SUM(CASE WHEN sub.name = 'Chemistry' THEN sub.score ELSE 0 END)) AS SumA
+        FROM students s
+        LEFT JOIN subjects sub ON s.studentID = sub.studentID
+        WHERE s.city = ?
+        GROUP BY s.studentID, s.firstName, s.lastName, s.dateOfBirth, s.city, s.phone
+        ORDER BY SumA DESC
+        LIMIT 10
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(city))
+
+        while (cursor.moveToNext()) {
+            val studentID = cursor.getInt(cursor.getColumnIndex("studentID"))
+            val firstName = cursor.getString(cursor.getColumnIndex("firstName"))
+            val lastName = cursor.getString(cursor.getColumnIndex("lastName"))
+            val dateOfBirth = cursor.getString(cursor.getColumnIndex("dateOfBirth"))
+            val studentCity = cursor.getString(cursor.getColumnIndex("city"))
+            val phone = cursor.getString(cursor.getColumnIndex("phone"))
+
+            // Lấy danh sách các môn học của sinh viên từ bảng subjects
+            val subjects = mutableListOf<Subjects>()
+            val subjectCursor = db.query(
+                "subjects",
+                arrayOf("subjectID", "name", "score"),
+                "studentID = ?",
+                arrayOf(studentID.toString()),
+                null, null, null
+            )
+
+            while (subjectCursor.moveToNext()) {
+                val subjectID = subjectCursor.getInt(subjectCursor.getColumnIndex("subjectID"))
+                val subjectName = subjectCursor.getString(subjectCursor.getColumnIndex("name"))
+                val subjectScore = subjectCursor.getInt(subjectCursor.getColumnIndex("score"))
+                subjects.add(Subjects(subjectID, studentID, subjectName, subjectScore))
+            }
+            subjectCursor.close()
+
+            studentList.add(Student(studentID, firstName, lastName, dateOfBirth, studentCity, phone, subjects))
+        }
         cursor.close()
 
         return studentList
     }
 
 
+    @SuppressLint("Range")
+    fun getTop10StudentsBySumB(city: String, context: Context): List<Student> {
+        val dbHelper = DatabaseHelper(context)
+        val db = dbHelper.readableDatabase
+
+        val studentList = mutableListOf<Student>()
+
+        // Truy vấn tính tổng điểm của 3 môn: English, Biology, Math, lọc theo thành phố
+        val query = """
+        SELECT s.studentID, s.firstName, s.lastName, s.dateOfBirth, s.city, s.phone,
+            (SUM(CASE WHEN sub.name = 'English' THEN sub.score ELSE 0 END) +
+             SUM(CASE WHEN sub.name = 'Biology' THEN sub.score ELSE 0 END) +
+             SUM(CASE WHEN sub.name = 'Math' THEN sub.score ELSE 0 END)) AS SumB
+        FROM students s
+        LEFT JOIN subjects sub ON s.studentID = sub.studentID
+        WHERE s.city = ?
+        GROUP BY s.studentID, s.firstName, s.lastName, s.dateOfBirth, s.city, s.phone
+        ORDER BY SumB DESC
+        LIMIT 10
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(city))
+        while (cursor.moveToNext()) {
+            val studentID = cursor.getInt(cursor.getColumnIndex("studentID"))
+            val firstName = cursor.getString(cursor.getColumnIndex("firstName"))
+            val lastName = cursor.getString(cursor.getColumnIndex("lastName"))
+            val dateOfBirth = cursor.getString(cursor.getColumnIndex("dateOfBirth"))
+            val studentCity = cursor.getString(cursor.getColumnIndex("city"))
+            val phone = cursor.getString(cursor.getColumnIndex("phone"))
+
+            // Lấy danh sách các môn học của sinh viên từ bảng subjects
+            val subjects = mutableListOf<Subjects>()
+            val subjectCursor = db.query(
+                "subjects",
+                arrayOf("subjectID", "name", "score"),
+                "studentID = ?",
+                arrayOf(studentID.toString()),
+                null, null, null
+            )
+
+            while (subjectCursor.moveToNext()) {
+                val subjectID = subjectCursor.getInt(subjectCursor.getColumnIndex("subjectID"))
+                val subjectName = subjectCursor.getString(subjectCursor.getColumnIndex("name"))
+                val subjectScore = subjectCursor.getInt(subjectCursor.getColumnIndex("score"))
+                subjects.add(Subjects(subjectID, studentID, subjectName, subjectScore))
+            }
+            subjectCursor.close()
+
+            studentList.add(Student(studentID, firstName, lastName, dateOfBirth, studentCity, phone, subjects))
+        }
+        cursor.close()
+
+        return studentList
+    }
+
+
+    @SuppressLint("Range")
+    fun getStudentByPriority(firstName: String, city: String, context: Context): Student? {
+        val dbHelper = DatabaseHelper(context)
+        val db = dbHelper.readableDatabase
+
+        // Truy vấn tính điểm của từng môn: Math, Chemistry, Physics của các sinh viên thỏa mãn điều kiện
+        // Lưu ý: Giả sử mỗi sinh viên có 1 dòng điểm cho từng môn
+        val query = """
+        SELECT s.studentID, s.firstName, s.lastName, s.dateOfBirth, s.city, s.phone,
+            MAX(CASE WHEN sub.name = 'Math' THEN sub.score ELSE 0 END) AS MathScore,
+            MAX(CASE WHEN sub.name = 'Chemistry' THEN sub.score ELSE 0 END) AS ChemistryScore,
+            MAX(CASE WHEN sub.name = 'Physics' THEN sub.score ELSE 0 END) AS PhysicsScore
+        FROM students s
+        LEFT JOIN subjects sub ON s.studentID = sub.studentID
+        WHERE s.firstName = ? AND s.city = ?
+        GROUP BY s.studentID, s.firstName, s.lastName, s.dateOfBirth, s.city, s.phone
+        ORDER BY MathScore DESC, ChemistryScore DESC, PhysicsScore DESC
+        LIMIT 1
+    """.trimIndent()
+
+        val cursor = db.rawQuery(query, arrayOf(firstName, city))
+        var student: Student? = null
+
+        if (cursor.moveToFirst()) {
+            val studentID = cursor.getInt(cursor.getColumnIndex("studentID"))
+            val firstNameVal = cursor.getString(cursor.getColumnIndex("firstName"))
+            val lastName = cursor.getString(cursor.getColumnIndex("lastName"))
+            val dateOfBirth = cursor.getString(cursor.getColumnIndex("dateOfBirth"))
+            val studentCity = cursor.getString(cursor.getColumnIndex("city"))
+            val phone = cursor.getString(cursor.getColumnIndex("phone"))
+
+            // Lấy danh sách môn học đầy đủ của sinh viên đó từ bảng subjects
+            val subjects = mutableListOf<Subjects>()
+            val subjectCursor = db.query(
+                "subjects",
+                arrayOf("subjectID", "name", "score"),
+                "studentID = ?",
+                arrayOf(studentID.toString()),
+                null, null, null
+            )
+            while (subjectCursor.moveToNext()) {
+                val subjectID = subjectCursor.getInt(subjectCursor.getColumnIndex("subjectID"))
+                val subjectName = subjectCursor.getString(subjectCursor.getColumnIndex("name"))
+                val subjectScore = subjectCursor.getInt(subjectCursor.getColumnIndex("score"))
+                subjects.add(Subjects(subjectID, studentID, subjectName, subjectScore))
+            }
+            subjectCursor.close()
+
+            student = Student(studentID, firstNameVal, lastName, dateOfBirth, studentCity, phone, subjects)
+        }
+        cursor.close()
+
+        return student
+    }
 
 
 
