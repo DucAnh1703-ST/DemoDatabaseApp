@@ -33,7 +33,7 @@
             android:exported="true"
             android:permission="com.example.permission.ACCESS">
             <intent-filter>
-                <action android:name="com.example.demodatabase.IAidlDatabaseService"/>
+                <action android:name="com.example.demodatabase.IMyMySchoolInterface"/>
             </intent-filter>
         </service>
 
