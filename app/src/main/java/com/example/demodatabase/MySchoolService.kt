@@ -18,22 +18,21 @@ class MySchoolService : Service() {
     }
 
     private val binder = object : IMyMySchoolInterface.Stub() {
-//        override fun getAllStudents(): List<Student> {
-//            return databaseHelper.getAllStudents()
-//        }
-//
-//        override fun getStudentsByName(name: String?): List<Student> {
-//            return databaseHelper.getStudentsByName(name!!)
-//        }
-//
-//        override fun getTop10StudentByObject(nameSubject: String?): List<Student> {
-//            return databaseHelper.getTop10StudentsBySubject(nameSubject!!)
-//        }
-//
-//        override fun getTop10StudentSumAByCity(nameCity: String?): List<Student> {
-//            return databaseHelper.getTop10SumAByCity(nameCity!!)
-//        }
-//
+
+        // Xử lý thêm các trường hợp không tim được Student, người dùng nhập vào chuỗi rỗng
+
+        override fun getStudentByPriority(firstName: String?, nameCity: String?): Student? {
+            return dataBaseOptionDemo.getStudentByPriority(firstName!!, nameCity!!, this@MySchoolService)
+        }
+
+        override fun getTop10StudentsBySumB(nameCity: String?): List<Student> {
+            return dataBaseOptionDemo.getTop10StudentsBySumB(nameCity ?: "",this@MySchoolService)
+        }
+
+        override fun getTop10StudentsBySumA(nameCity: String?): List<Student> {
+            return dataBaseOptionDemo.getTop10StudentsBySumA(nameCity!!,this@MySchoolService)
+        }
+
         override fun getTop10StudentsBySubject(nameSubject: String?): List<Student> {
             return dataBaseOptionDemo.getTop10StudentsBySubject(nameSubject!!,this@MySchoolService)
         }

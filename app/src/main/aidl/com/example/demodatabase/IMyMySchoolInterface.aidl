@@ -13,4 +13,7 @@ parcelable Subject;
 interface IMyMySchoolInterface {
     List<Student> getFirst100Students();
     List<Student> getTop10StudentsBySubject(String nameSubject);
+    List<Student> getTop10StudentsBySumB(String nameCity);
+    List<Student> getTop10StudentsBySumA(String nameCity);
+    Student getStudentByPriority(String firstName, String nameCity);
 }
