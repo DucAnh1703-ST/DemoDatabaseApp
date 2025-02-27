@@ -21,16 +21,20 @@ class MySchoolService : Service() {
 
         // Xử lý thêm các trường hợp không tim được Student, người dùng nhập vào chuỗi rỗng
 
+
+
+
+
         override fun getStudentByPriority(firstName: String?, nameCity: String?): Student? {
             return dataBaseOptionDemo.getStudentByPriority(firstName!!, nameCity!!, this@MySchoolService)
         }
 
-        override fun getTop10StudentsBySumB(nameCity: String?): List<Student> {
-            return dataBaseOptionDemo.getTop10StudentsBySumB(nameCity ?: "",this@MySchoolService)
+        override fun getTop10StudentsBySumA(nameCity: String?): List<Student> {
+            return dataBaseOptionDemo.getTop10StudentsBySumA(nameCity ?: "",this@MySchoolService)
         }
 
-        override fun getTop10StudentsBySumA(nameCity: String?): List<Student> {
-            return dataBaseOptionDemo.getTop10StudentsBySumA(nameCity!!,this@MySchoolService)
+        override fun getTop10StudentsBySumB(nameCity: String?): List<Student> {
+            return dataBaseOptionDemo.getTop10StudentsBySumB(nameCity ?: "",this@MySchoolService)
         }
 
         override fun getTop10StudentsBySubject(nameSubject: String?): List<Student> {

@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import com.google.gson.Gson
 
 class DatabaseOperations {
     @SuppressLint("Range")
@@ -201,6 +202,7 @@ class DatabaseOperations {
             studentList.add(Student(studentID, firstName, lastName, dateOfBirth, city, phone, subjects))
         }
         cursor.close()
+
         return studentList
     }
 
@@ -232,28 +234,30 @@ class DatabaseOperations {
             val firstName = cursor.getString(cursor.getColumnIndex("firstName"))
             val lastName = cursor.getString(cursor.getColumnIndex("lastName"))
             val dateOfBirth = cursor.getString(cursor.getColumnIndex("dateOfBirth"))
-            val studentCity = cursor.getString(cursor.getColumnIndex("city"))
+            val city = cursor.getString(cursor.getColumnIndex("city"))
             val phone = cursor.getString(cursor.getColumnIndex("phone"))
 
-            // Lấy danh sách các môn học của sinh viên từ bảng subjects
+            // Lấy danh sách môn học
             val subjects = mutableListOf<Subjects>()
             val subjectCursor = db.query(
-                "subjects",
-                arrayOf("subjectID", "name", "score"),
-                "studentID = ?",
-                arrayOf(studentID.toString()),
-                null, null, null
+                "subjects", arrayOf("subjectID", "name", "score"),
+                "studentID = ?", arrayOf(studentID.toString()), null, null, null
             )
 
             while (subjectCursor.moveToNext()) {
-                val subjectID = subjectCursor.getInt(subjectCursor.getColumnIndex("subjectID"))
-                val subjectName = subjectCursor.getString(subjectCursor.getColumnIndex("name"))
-                val subjectScore = subjectCursor.getInt(subjectCursor.getColumnIndex("score"))
-                subjects.add(Subjects(subjectID, studentID, subjectName, subjectScore))
+                subjects.add(
+                    Subjects(
+                        subjectCursor.getInt(subjectCursor.getColumnIndex("subjectID")),
+                        studentID,
+                        subjectCursor.getString(subjectCursor.getColumnIndex("name")),
+                        subjectCursor.getInt(subjectCursor.getColumnIndex("score"))
+                    )
+                )
             }
             subjectCursor.close()
 
-            studentList.add(Student(studentID, firstName, lastName, dateOfBirth, studentCity, phone, subjects))
+            // Thêm sinh viên vào danh sách
+            studentList.add(Student(studentID, firstName, lastName, dateOfBirth, city, phone, subjects))
         }
         cursor.close()
 
