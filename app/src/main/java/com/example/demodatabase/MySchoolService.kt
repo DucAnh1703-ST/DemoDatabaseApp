@@ -18,13 +18,6 @@ class MySchoolService : Service() {
     }
 
     private val binder = object : IMyMySchoolInterface.Stub() {
-
-        // Xử lý thêm các trường hợp không tim được Student, người dùng nhập vào chuỗi rỗng
-
-
-
-
-
         override fun getStudentByPriority(firstName: String?, nameCity: String?): Student? {
             return dataBaseOptionDemo.getStudentByPriority(firstName!!, nameCity!!, this@MySchoolService)
         }
