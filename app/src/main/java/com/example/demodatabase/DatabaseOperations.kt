@@ -118,8 +118,10 @@ class DatabaseOperations {
         val db = dbHelper.readableDatabase
 
         val studentList = mutableListOf<Student>()
-        val cursor = db.query(
-            "students", null, null, null, null, null, "studentID ASC", "100"
+
+        // Sử dụng rawQuery để lấy 100 sinh viên đầu tiên
+        val cursor = db.rawQuery(
+            "SELECT * FROM students ORDER BY studentID ASC LIMIT 100", null
         )
 
         while (cursor.moveToNext()) {
@@ -130,13 +132,13 @@ class DatabaseOperations {
             val city = cursor.getString(cursor.getColumnIndex("city"))
             val phone = cursor.getString(cursor.getColumnIndex("phone"))
 
-            // Lấy danh sách môn học
-            val subjects = mutableListOf<Subjects>()
-            val subjectCursor = db.query(
-                "subjects", arrayOf("subjectID", "name", "score"),
-                "studentID = ?", arrayOf(studentID.toString()), null, null, null
+            // Lấy danh sách môn học của sinh viên này bằng rawQuery
+            val subjectCursor = db.rawQuery(
+                "SELECT subjectID, name, score FROM subjects WHERE studentID = ?",
+                arrayOf(studentID.toString())
             )
 
+            val subjects = mutableListOf<Subjects>()
             while (subjectCursor.moveToNext()) {
                 subjects.add(
                     Subjects(
@@ -156,6 +158,7 @@ class DatabaseOperations {
 
         return studentList
     }
+
 
 
     @SuppressLint("Range")
